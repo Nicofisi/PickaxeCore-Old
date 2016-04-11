@@ -160,8 +160,6 @@ public class Metrics {
    */
   public boolean start() {
 
-    plugin.get().log(this.pingInterval * 1200L);
-
     synchronized (optOutLock) {
 
       // Is metrics already running?
@@ -408,7 +406,7 @@ public class Metrics {
     connection.setDoOutput(true);
 
     if (plugin.getDebug()) {
-      plugin.log("[Metrics] Prepared request for " + pluginName + " uncompressed="
+      plugin.log("Metrics > Prepared request for " + pluginName + " uncompressed="
           + uncompressed.length + " compressed=" + compressed.length);
     }
 
