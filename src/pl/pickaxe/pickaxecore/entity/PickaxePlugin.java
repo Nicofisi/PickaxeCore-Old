@@ -62,14 +62,15 @@ public abstract class PickaxePlugin extends JavaPlugin {
 
     // Temporary
     this.debug = true;
-    
+
     // Set the variable used to PluginName.get()
     PickaxePlugin.pp = pp;
-    
+
     // Create an instance of Metrics
     try {
       this.metrics = new Metrics(pp, 8);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+    }
     return true;
   }
 
@@ -83,16 +84,19 @@ public abstract class PickaxePlugin extends JavaPlugin {
     java.text.DecimalFormat df = new java.text.DecimalFormat();
     df.setMinimumFractionDigits(1);
     df.setMaximumFractionDigits(1);
-    log(ChatColor.YELLOW + "=== ENABLE " + ChatColor.GREEN + "COMPLETE" + ChatColor.YELLOW
-        + " (Took " + ChatColor.LIGHT_PURPLE + df.format(tookMs) + "ms" + ChatColor.YELLOW
-        + ") ===");
+    log("<i>=== ENABLE <g>COMPLETE<i> (Took <h>" + df.format(tookMs) + "ms<i> ===");
   }
 
   @Override
   public void onDisable() {
     onDisableInner();
+    postDisable();
+  }
+
+  public void postDisable() {
     this.setEnabled(false);
-    log("Disabled");
+    this.getServer().getScheduler().cancelTasks(this);
+    log("<i>Disabled.");
   }
 
   public void onDisableInner() {
@@ -121,7 +125,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
   // -------------------------------------------- //
 
   // Methods to make the logging easier
-  
+
   public void log(Object... msg) {
     log(PickaxeLevel.INFO, msg);
   }
@@ -160,7 +164,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
   }
 
   // Actual log method
-  
+
   public void log(PickaxeLevel lvl, Object... msg) {
     String[] coloured = Txt.format(msg);
     if (coloured == null) {
@@ -185,7 +189,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
     }
     String name = this.getDescription().getName();
     String ver = this.getDescription().getVersion();
-//    if (this.debug == true) {}
+    // if (this.debug == true) {}
     if (lvl == PickaxeLevel.INFO) {
       c.sendMessage(Txt.format("<teal>[<aqua>" + name + " " + ver + "<teal>]<reset> " + col));
     } else if (lvl == PickaxeLevel.WARNING) {
