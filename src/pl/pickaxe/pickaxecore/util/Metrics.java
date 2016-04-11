@@ -8,6 +8,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
+import pl.pickaxe.pickaxecore.entity.PickaxePlugin;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -55,7 +57,7 @@ public class Metrics {
   /**
    * The plugin this metrics submits for
    */
-  private final Plugin plugin;
+  private final PickaxePlugin plugin;
 
   /**
    * All of the custom graphs to submit to metrics
@@ -92,7 +94,7 @@ public class Metrics {
    */
   private volatile BukkitTask task = null;
 
-  public Metrics(final Plugin plugin, Integer pingInterval) throws IOException {
+  public Metrics(final PickaxePlugin plugin, Integer pingInterval) throws IOException {
     if (plugin == null) {
       this.pingInterval = pingInterval;
       throw new IllegalArgumentException("Plugin cannot be null");
@@ -165,6 +167,9 @@ public class Metrics {
    * @return True if statistics measuring is running, otherwise false.
    */
   public boolean start() {
+    
+    plugin.get().log(this.pingInterval * 1200L);
+    
     synchronized (optOutLock) {
       // Did we opt out?
       if (isOptOut()) {
@@ -194,7 +199,8 @@ public class Metrics {
                 }
               }
             }
-
+            
+            
             // We use the inverse of firstPost because if it is the first time we are posting,
             // it is not a interval ping, so it evaluates to FALSE
             // Each time thereafter it will evaluate to TRUE, i.e PING!

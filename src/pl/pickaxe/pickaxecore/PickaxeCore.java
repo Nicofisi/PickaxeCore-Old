@@ -12,7 +12,7 @@ public class PickaxeCore extends PickaxePlugin {
 
   private static PickaxeCore i;
 
-  public static PickaxeCore get() {
+  public PickaxeCore get() {
     return i;
   }
 

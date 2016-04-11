@@ -23,7 +23,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
   public long enableStart;
   public Metrics metrics;
 
-  public static PickaxePlugin get() {
+  public PickaxePlugin get() {
     return pp;
   }
 
@@ -69,8 +69,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
     // Create an instance of Metrics
     try {
       this.metrics = new Metrics(pp, 8);
-    } catch (IOException e) {
-    }
+    } catch (IOException e) {}
     return true;
   }
 
