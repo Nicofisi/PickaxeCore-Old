@@ -61,7 +61,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
     this.enableStart = System.nanoTime();
 
     // Temporary
-    this.debug = true;
+    setDebug(true);
 
     // Set the variable used to PluginName.get()
     PickaxePlugin.pp = pp;
@@ -101,7 +101,17 @@ public abstract class PickaxePlugin extends JavaPlugin {
   public void onDisableInner() {
     // Custom overriden stuff for certain plugin
   }
-
+  // -------------------------------------------- //
+  // DEBUGGING
+  // -------------------------------------------- //
+  
+  public boolean getDebug() {
+    return this.debug;
+  }
+  
+  public void setDebug(boolean debug) {
+    this.debug = debug;
+  }
   // -------------------------------------------- //
   // METRICS
   // -------------------------------------------- //
@@ -202,7 +212,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
           + ChatColor.DARK_GREEN + "] " + ChatColor.RESET + col);
     } else if (lvl == PickaxeLevel.NOTICE) {
       c.sendMessage(Txt.format(
-          "<orange>[<yellow>" + name + " " + ver + "  NOTICE " + "<orange>]<reset> " + col));
+          "<orange>[<yellow>" + name + " " + ver + " NOTICE " + "<orange>]<reset> " + col));
     } else if (lvl == PickaxeLevel.DEFAULT) {
       c.sendMessage("[" + name + "] " + col);
     }

@@ -5,7 +5,12 @@ public class Txt {
     String[] out = new String[text.length];
     int i = 0;
     for (Object txt : text) {
-      String str = (String) txt;
+      String str = null;
+      try {
+      str = (String) txt;
+      } catch (ClassCastException e) {
+        str = txt.toString();
+      }
       if (str == null) {
         continue;
       }

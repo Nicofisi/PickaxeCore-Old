@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -82,11 +81,7 @@ public class Metrics {
   /**
    * Debug mode
    */
-  private final boolean debug;
 
-  /**
-   * Lock for synchronization
-   */
   private final Object optOutLock = new Object();
 
   /**
@@ -96,10 +91,10 @@ public class Metrics {
 
   public Metrics(final PickaxePlugin plugin, Integer pingInterval) throws IOException {
     if (plugin == null) {
-      this.pingInterval = pingInterval;
       throw new IllegalArgumentException("Plugin cannot be null");
     }
 
+    this.pingInterval = pingInterval;
     this.plugin = plugin;
 
     // load the config
@@ -107,9 +102,7 @@ public class Metrics {
     configuration = YamlConfiguration.loadConfiguration(configurationFile);
 
     // add some defaults
-    configuration.addDefault("opt-out", false);
     configuration.addDefault("guid", UUID.randomUUID().toString());
-    configuration.addDefault("debug", false);
 
     // Do we need to create the file?
     if (configuration.get("guid", null) == null) {
@@ -119,7 +112,6 @@ public class Metrics {
 
     // Load the guid then
     guid = configuration.getString("guid");
-    debug = configuration.getBoolean("debug", false);
   }
 
   /**
@@ -167,14 +159,10 @@ public class Metrics {
    * @return True if statistics measuring is running, otherwise false.
    */
   public boolean start() {
-    
+
     plugin.get().log(this.pingInterval * 1200L);
-    
+
     synchronized (optOutLock) {
-      // Did we opt out?
-      if (isOptOut()) {
-        return false;
-      }
 
       // Is metrics already running?
       if (task != null) {
@@ -190,7 +178,7 @@ public class Metrics {
             // This has to be synchronized or it can collide with the disable method.
             synchronized (optOutLock) {
               // Disable Task, if it is running and the server owner decided to opt-out
-              if (isOptOut() && task != null) {
+              if (task != null) {
                 task.cancel();
                 task = null;
                 // Tell all plotters to stop gathering information.
@@ -199,8 +187,8 @@ public class Metrics {
                 }
               }
             }
-            
-            
+
+
             // We use the inverse of firstPost because if it is the first time we are posting,
             // it is not a interval ping, so it evaluates to FALSE
             // Each time thereafter it will evaluate to TRUE, i.e PING!
@@ -210,8 +198,8 @@ public class Metrics {
             // Each post thereafter will be a ping
             firstPost = false;
           } catch (IOException e) {
-            if (debug) {
-              Bukkit.getLogger().log(Level.INFO, "[Metrics] " + e.getMessage());
+            if (plugin.getDebug()) {
+              plugin.log(Level.INFO, "Metrics > " + e.getMessage());
             }
           }
         }
@@ -219,15 +207,6 @@ public class Metrics {
 
       return true;
     }
-  }
-
-  /**
-   * Has the server owner denied plugin metrics?
-   *
-   * @return true if metrics should be opted out of it
-   */
-  public boolean isOptOut() {
-    return false;
   }
 
   /**
@@ -239,11 +218,6 @@ public class Metrics {
   public void enable() throws IOException {
     // This has to be synchronized or it can collide with the check in the task.
     synchronized (optOutLock) {
-      // Check if the server owner has already set opt-out, if not, set it.
-      if (isOptOut()) {
-        configuration.set("opt-out", false);
-        configuration.save(configurationFile);
-      }
 
       // Enable Task, if it is not running
       if (task == null) {
@@ -261,11 +235,6 @@ public class Metrics {
   public void disable() throws IOException {
     // This has to be synchronized or it can collide with the check in the task.
     synchronized (optOutLock) {
-      // Check if the server owner has already set opt-out, if not, set it.
-      if (!isOptOut()) {
-        configuration.set("opt-out", true);
-        configuration.save(configurationFile);
-      }
 
       // Disable Task, if it is running
       if (task != null) {
@@ -308,8 +277,8 @@ public class Metrics {
         return ((Player[]) onlinePlayerMethod.invoke(Bukkit.getServer())).length;
       }
     } catch (Exception ex) {
-      if (debug) {
-        Bukkit.getLogger().log(Level.INFO, "[Metrics] " + ex.getMessage());
+      if (plugin.getDebug()) {
+        plugin.log(Level.INFO, "Metrics > " + ex.getMessage());
       }
     }
 
@@ -438,8 +407,8 @@ public class Metrics {
 
     connection.setDoOutput(true);
 
-    if (debug) {
-      System.out.println("[Metrics] Prepared request for " + pluginName + " uncompressed="
+    if (plugin.getDebug()) {
+      plugin.log("[Metrics] Prepared request for " + pluginName + " uncompressed="
           + uncompressed.length + " compressed=" + compressed.length);
     }
 
