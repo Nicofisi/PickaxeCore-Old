@@ -1,0 +1,19 @@
+main: pl.pickaxe.pickaxecore.PickaxeCore
+name: PickaxeCore
+version: 0.1
+description: A library for Pickaxe plugins by Nicofisi
+author: Nicofisi
+website: http://github.com/Nicofisi/PickaxeCore
+
+commands:
+  pickaxecore:
+    description: Main command of PickaxeCore
+    usage: /pickcore
+    aliases: [pcore, pickcore, pickaxec]
+    
+permissions:
+  pickaxecore.debug:
+    default: false
+  pickaxecore.*:
+    children:
+      pickaxecore.debug: false
