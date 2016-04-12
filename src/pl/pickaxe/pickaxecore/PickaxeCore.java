@@ -12,7 +12,7 @@ public class PickaxeCore extends PickaxePlugin {
 
   private static PickaxeCore i;
 
-  public PickaxeCore get() {
+  public static PickaxeCore get() {
     return i;
   }
 
@@ -28,7 +28,7 @@ public class PickaxeCore extends PickaxePlugin {
 
   @Override
   public void onEnableInner() {
-    String test = "Dawno dawno temu try";
+    String test = "Test dawno dawno temu";
     log(test);
     logWarning(test);
     logError(test);
@@ -36,17 +36,22 @@ public class PickaxeCore extends PickaxePlugin {
     logRaw(test);
     logDefault(test);
     logNotice(test);
+    try {
+      throw new PickaxeException(test);
+    } catch (PickaxeException e) {
+      e.hide(e);
+    }
   }
 
   @Override
   public void onDisableInner() {
-    
+
   }
-  
+
   // -------------------------------------------- //
   // API FOR PLUGINS
   // -------------------------------------------- //
-  
+
   public static void registerPlugin(PickaxePlugin pp) {
     ppls.add(pp);
   }
@@ -60,6 +65,6 @@ public class PickaxeCore extends PickaxePlugin {
     }
     return null;
   }
-  
+
 
 }

@@ -4,6 +4,7 @@ version: 0.1
 description: A library for Pickaxe plugins by Nicofisi
 author: Nicofisi
 website: http://github.com/Nicofisi/PickaxeCore
+load: startup
 
 commands:
   pickaxecore:

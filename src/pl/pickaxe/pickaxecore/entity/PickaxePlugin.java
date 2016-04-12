@@ -8,6 +8,7 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import pl.pickaxe.pickaxecore.PickaxeCore;
+import pl.pickaxe.pickaxecore.PickaxeException;
 import pl.pickaxe.pickaxecore.enums.PickaxeLevel;
 import pl.pickaxe.pickaxecore.util.Metrics;
 import pl.pickaxe.pickaxecore.util.Txt;
@@ -23,7 +24,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
   public long enableStart;
   public Metrics metrics;
 
-  public PickaxePlugin get() {
+  public PickaxePlugin getPickaxePlugin() {
     return pp;
   }
 
@@ -36,6 +37,8 @@ public abstract class PickaxePlugin extends JavaPlugin {
 
     // Stop enabling if the preEnable method failed
     if (!this.preEnable(this)) {
+
+      // TODO Log info and disable plugin
       return;
     }
 
@@ -54,11 +57,11 @@ public abstract class PickaxePlugin extends JavaPlugin {
 
   public boolean preEnable(PickaxePlugin pp) {
 
-    // Cool colored info that the plugin has started enabling itself
-    log("<yellow>=== ENABLE <green>START<yellow> ===");
-
     // Start enable time counter
     this.enableStart = System.nanoTime();
+
+    // Cool colored info that the plugin has started enabling itself
+    log("<yellow>=== ENABLE <green>START<yellow> ===");
 
     // Temporary
     setDebug(true);
@@ -69,7 +72,8 @@ public abstract class PickaxePlugin extends JavaPlugin {
     // Create an instance of Metrics
     try {
       this.metrics = new Metrics(pp, 8);
-    } catch (IOException e) {}
+    } catch (IOException e) {
+    }
     return true;
   }
 
@@ -83,7 +87,7 @@ public abstract class PickaxePlugin extends JavaPlugin {
     java.text.DecimalFormat df = new java.text.DecimalFormat();
     df.setMinimumFractionDigits(1);
     df.setMaximumFractionDigits(1);
-    log("<i>=== ENABLE <g>COMPLETE<i> (Took <h>" + df.format(tookMs) + "ms<i> ===");
+    log("<i>=== ENABLE <g>COMPLETE<i> (Took <h>" + df.format(tookMs) + "ms<i>) ===");
   }
 
   @Override
@@ -104,11 +108,11 @@ public abstract class PickaxePlugin extends JavaPlugin {
   // -------------------------------------------- //
   // DEBUGGING
   // -------------------------------------------- //
-  
+
   public boolean getDebug() {
     return this.debug;
   }
-  
+
   public void setDebug(boolean debug) {
     this.debug = debug;
   }
@@ -127,6 +131,16 @@ public abstract class PickaxePlugin extends JavaPlugin {
         metrics.start();
       }
     };
+  }
+
+  // -------------------------------------------- //
+  // DIFFERENT TEST STUFF
+  // -------------------------------------------- //
+
+  //
+
+  public void throwPickaxeException(String message) throws PickaxeException {
+    throw new PickaxeException(message);
   }
 
   // -------------------------------------------- //
@@ -211,8 +225,8 @@ public abstract class PickaxePlugin extends JavaPlugin {
       c.sendMessage(ChatColor.DARK_GREEN + "[" + ChatColor.GREEN + name + " " + ver + " UPDATER"
           + ChatColor.DARK_GREEN + "] " + ChatColor.RESET + col);
     } else if (lvl == PickaxeLevel.NOTICE) {
-      c.sendMessage(Txt.format(
-          "<orange>[<yellow>" + name + " " + ver + " NOTICE " + "<orange>]<reset> " + col));
+      c.sendMessage(Txt
+          .format("<orange>[<yellow>" + name + " " + ver + " NOTICE " + "<orange>]<reset> " + col));
     } else if (lvl == PickaxeLevel.DEFAULT) {
       c.sendMessage("[" + name + "] " + col);
     }
